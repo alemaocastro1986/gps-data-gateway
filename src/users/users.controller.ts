@@ -35,16 +35,4 @@ export class UsersController {
     });
     return user;
   }
-
-  @Post('/auth/:id')
-  async auth(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body('password') pass: string,
-  ) {
-    const passwordCheck = await this.userService.auth(id, pass);
-
-    return {
-      passwordMatch: passwordCheck,
-    };
-  }
 }

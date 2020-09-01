@@ -1,17 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { IUserService } from './interfaces/IUserService';
-import { Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dtos/CreateUserDto';
 import { UpdateUserServiceDto } from './dtos/UpdateUserServiceDto';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UsersService implements IUserService {
-  constructor(
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
-  ) {}
+  constructor(private userRepository: UserRepository) {}
 
   async create({ name, password, email }: CreateUserDto): Promise<UserEntity> {
     const user = this.userRepository.create({
@@ -43,17 +39,5 @@ export class UsersService implements IUserService {
     await user.reload();
 
     return user;
-  }
-
-  async auth(id: string, password: string): Promise<boolean> {
-    const user = await this.userRepository.findOne({
-      where: {
-        id,
-      },
-    });
-
-    const isValid = await user.passwordCheck(password);
-
-    return isValid;
   }
 }
